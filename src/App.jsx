@@ -32,9 +32,23 @@ import {
   User,
   Mail,
   Quote,
+  Loader2,
+  AlertCircle,
 } from 'lucide-react';
+import { useData } from './context/DataContext';
+import { applicationsAPI } from './services/api';
+import {
+  EventCardSkeleton,
+  ProjectCardSkeleton,
+  TeamCardSkeleton,
+  StatsSkeleton,
+  EventDetailSkeleton,
+  ProjectDetailSkeleton,
+  TeamDetailSkeleton,
+  SkeletonGrid,
+} from './components/Skeletons';
 
-// --- DATA ---
+// --- STATIC DATA ---
 
 const NAV_LINKS = [
   { name: 'Neler Yaptık?', href: '#activities', page: 'home' },
@@ -43,236 +57,36 @@ const NAV_LINKS = [
   { name: 'Ekibimiz', action: 'team', page: 'team' },
 ];
 
-const STATS = [
-  { emoji: '🚀', value: '450+', label: 'Aktif Üye' },
-  { emoji: '🍕', value: '50+', label: 'Pizza & Code' },
-  { emoji: '🎓', value: '12', label: 'Bootcamp' },
-  { emoji: '💡', value: '30+', label: 'Proje' },
-];
+// --- TOAST NOTIFICATION ---
 
-const TEAM_MEMBERS = [
-  {
-    id: 1,
-    name: 'Elif Yılmaz',
-    role: 'Kulüp Başkanı',
-    department: 'Bilgisayar Mühendisliği',
-    bio: 'Veri bilimi ve yapay zeka konularına tutkulu bir bilgisayar mühendisliği öğrencisiyim. 3 yıldır kulüpte aktif rol alıyorum. Özellikle NLP ve Büyük Dil Modelleri üzerine çalışıyorum. Boş zamanlarımda Kaggle yarışmalarına katılıyorum ve bilim kurgu okumayı seviyorum.',
-    skills: ['Python', 'PyTorch', 'NLP', 'Liderlik'],
-    image:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=600&auto=format&fit=crop',
-    linkedin: '#',
-    github: '#',
-    email: 'elif@datasci.club',
-  },
-  {
-    id: 2,
-    name: 'Mert Demir',
-    role: 'Başkan Yardımcısı',
-    department: 'Endüstri Mühendisliği',
-    bio: 'Veri analitiği ve optimizasyon problemlerine ilgi duyuyorum. Kulübün operasyonel süreçlerini yönetiyor ve stratejik planlamasında görev alıyorum. Veriye dayalı karar verme süreçleri üzerine uzmanlaşmayı hedefliyorum.',
-    skills: ['R', 'SQL', 'Tableau', 'Proje Yönetimi'],
-    image:
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=600&auto=format&fit=crop',
-    linkedin: '#',
-    github: '#',
-    email: 'mert@datasci.club',
-  },
-  {
-    id: 3,
-    name: 'Ayşe Kara',
-    role: 'Eğitim Koordinatörü',
-    department: 'Yazılım Mühendisliği',
-    bio: 'Bilgiyi paylaşmanın en iyi öğrenme yöntemi olduğuna inanıyorum. Kulüp bünyesindeki bootcamp ve atölye çalışmalarını organize ediyorum. Açık kaynak kodlu projelere katkıda bulunmayı ve topluluk önünde konuşmayı seviyorum.',
-    skills: ['Python', 'TensorFlow', 'Eğitim Tasarımı', 'Docker'],
-    image:
-      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=600&auto=format&fit=crop',
-    linkedin: '#',
-    github: '#',
-    email: 'ayse@datasci.club',
-  },
-  {
-    id: 4,
-    name: 'Caner Erkin',
-    role: 'Proje Lideri',
-    department: 'Elektrik-Elektronik Müh.',
-    bio: 'Gömülü sistemler ve yapay zeka entegrasyonu üzerine çalışıyorum. Kulübün teknik projelerine liderlik ediyor ve üyelerimize mentorluk yapıyorum. Nesnelerin İnterneti (IoT) ve Edge AI konuları özel ilgi alanım.',
-    skills: ['C++', 'Python', 'OpenCV', 'IoT'],
-    image:
-      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=600&auto=format&fit=crop',
-    linkedin: '#',
-    github: '#',
-    email: 'caner@datasci.club',
-  },
-  {
-    id: 5,
-    name: 'Zeynep Su',
-    role: 'Sosyal Medya Sorumlusu',
-    department: 'İletişim Fakültesi',
-    bio: 'Veri hikayeleştirme ve dijital pazarlama konularında kendimi geliştiriyorum. Kulübün dijital varlığını yönetiyor ve etkinliklerimizi daha geniş kitlelere ulaştırmak için içerik üretiyorum. Tasarım ve iletişim benim tutkum.',
-    skills: [
-      'Sosyal Medya Yönetimi',
-      'Canva',
-      'İçerik Yazarlığı',
-      'Veri Görselleştirme',
-    ],
-    image:
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=600&auto=format&fit=crop',
-    linkedin: '#',
-    github: '#',
-    email: 'zeynep@datasci.club',
-  },
-  {
-    id: 6,
-    name: 'Burak Yıl',
-    role: 'Organizasyon Sorumlusu',
-    department: 'İşletme',
-    bio: 'İnsanları bir araya getirmeyi ve etkinlik planlamayı seviyorum. Hackathonlardan tanışma toplantılarına kadar kulübün tüm organizasyonlarının sorunsuz geçmesi için çalışıyorum. Takım çalışması ve kriz yönetimi konularında deneyimliyim.',
-    skills: ['Etkinlik Yönetimi', 'İletişim', 'Bütçe Planlama', 'Liderlik'],
-    image:
-      'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=600&auto=format&fit=crop',
-    linkedin: '#',
-    github: '#',
-    email: 'burak@datasci.club',
-  },
-];
+const Toast = ({ message, type = 'success', onClose }) => {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 4000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
 
-const ALL_EVENTS = [
-  {
-    id: 1,
-    date: '25 Mayıs 2024',
-    title: 'Data & Coffee Buluşması',
-    tag: 'Sosyal',
-    category: 'social',
-    color: 'bg-orange-100 text-orange-600',
-    location: 'Olbia Çarşısı',
-    desc: 'Kahveni kap gel! Veri bilimi konuşuyoruz, stres atıyoruz.',
-    longDesc:
-      "Final haftası öncesi biraz nefes almak, sektördeki son gelişmeleri rahat bir ortamda konuşmak ve yeni arkadaşlar edinmek için Olbia Çarşısı'nda harika bir gün geçirdik. Yaklaşık 50 kişinin katıldığı bu buluşmada hem kahvelerimizi yudumladık hem de veri bilimi quiz yarışmasıyla eğlenceli anlar yaşadık.",
-    image:
-      'https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=800&auto=format&fit=crop',
-    instagramLink: 'https://instagram.com/datasci-club',
-  },
-  {
-    id: 2,
-    date: '2 Haziran 2024',
-    title: "Python'a Giriş 101",
-    tag: 'Eğitim',
-    category: 'education',
-    color: 'bg-blue-100 text-blue-600',
-    location: 'Online / Zoom',
-    desc: 'Hiç kod bilmene gerek yok. Sıfırdan başlıyoruz!',
-    longDesc:
-      "Programlamaya ilk adımını atmak isteyen 100+ katılımcıyla Python'ın temellerini attık. Değişkenlerden döngülere, fonksiyonlardan temel veri yapılarına kadar yoğun ama keyifli bir 6 saat geçirdik. Eğitim sonunda katılımcılar ilk basit algoritmalarını yazdılar.",
-    image:
-      'https://images.unsplash.com/photo-1587620962725-abab7fe55159?q=80&w=800&auto=format&fit=crop',
-    instagramLink: 'https://instagram.com/datasci-club',
-  },
-  {
-    id: 3,
-    date: '15 Haziran 2024',
-    title: 'Yıl Sonu Hackathonu',
-    tag: 'Yarışma',
-    category: 'competition',
-    color: 'bg-purple-100 text-purple-600',
-    location: 'Atatürk Konferans Salonu',
-    desc: '24 saat sürecek veri maratonu. Büyük ödül sürpriz!',
-    longDesc:
-      'Bu senenin en büyük etkinliği! 20 takımın yarıştığı, 24 saat süren kesintisiz bir kodlama maratonu. Yarışmacılar verilen finans verisetini kullanarak en iyi kredi risk tahmin modelini geliştirmeye çalıştılar. Jüri sunumları ve ödül töreniyle unutulmaz bir geceydi.',
-    image:
-      'https://images.unsplash.com/photo-1504384308090-c54be3855833?q=80&w=800&auto=format&fit=crop',
-    instagramLink: 'https://instagram.com/datasci-club',
-  },
-  {
-    id: 4,
-    date: '10 Nisan 2024',
-    title: 'Kaggle Grandmaster Söyleşisi',
-    tag: 'Panel',
-    category: 'panel',
-    color: 'bg-green-100 text-green-600',
-    location: 'Konferans Salonu',
-    desc: "Kaggle'da nasıl derece yapılır? Taktikler ve ipuçları.",
-    longDesc:
-      'Dünyanın en iyi veri bilimcilerinden biriyle tanıştık. Kaggle Grandmaster ünvanına sahip konuğumuz, yarışmalarda nasıl stratejiler izlediğini ve kariyer yolculuğunu anlattı. Soru-cevap bölümünde öğrencilerin sektöre dair merak ettikleri tüm sorular yanıtlandı.',
-    image:
-      'https://images.unsplash.com/photo-1544531586-fde5298cdd40?q=80&w=800&auto=format&fit=crop',
-    instagramLink: 'https://instagram.com/datasci-club',
-  },
-  {
-    id: 5,
-    date: '22 Mart 2024',
-    title: 'SQL Bootcamp',
-    tag: 'Eğitim',
-    category: 'education',
-    color: 'bg-blue-100 text-blue-600',
-    location: 'Bilgisayar Lab',
-    desc: 'Veritabanı sorgulama sanatını öğreniyoruz.',
-    longDesc:
-      "Veri analistinin en önemli silahı SQL'i öğrenmek için laboratuvarda toplandık. SELECT, JOIN, GROUP BY ve daha fazlası uygulamalı örneklerle işlendi. Gerçek e-ticaret verileri üzerinde sorgular çalıştırarak pratik yaptık.",
-    image:
-      'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?q=80&w=800&auto=format&fit=crop',
-    instagramLink: 'https://instagram.com/datasci-club',
-  },
-  {
-    id: 6,
-    date: '14 Şubat 2024',
-    title: "Veri Aşkına: Valentine's Day",
-    tag: 'Sosyal',
-    category: 'social',
-    color: 'bg-pink-100 text-pink-600',
-    location: 'Kampüs Kafe',
-    desc: 'Tinder verisi analizi yaptığımız eğlenceli bir buluşma.',
-    longDesc:
-      'Sevgililer gününü yalnız geçirmek yok dedik ve toplandık! Anonimleştirilmiş flört uygulaması verilerini analiz ettik, "aşkın matematiği var mıdır?" sorusuna verilerle cevap aradık. Hem eğlendik hem de görselleştirme tekniklerini konuştuk.',
-    image:
-      'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=800&auto=format&fit=crop',
-    instagramLink: 'https://instagram.com/datasci-club',
-  },
-];
-
-const PROJECTS = [
-  {
-    id: 101,
-    title: 'Spotify Müzik Analizi',
-    category: 'Veri Analizi',
-    emoji: '🎵',
-    desc: 'Hangi şarkıların hit olacağını tahmin eden eğlenceli bir analiz projesi.',
-    longDesc:
-      'Spotify API kullanarak son 10 yılın Top 100 listelerini çektik ve "dans edilebilirlik", "enerji", "akustiklik" gibi özelliklerin şarkının başarısına etkisini inceledik. XGBoost kullanarak %85 doğrulukla bir şarkının hit olup olmayacağını tahmin ettik.',
-    tags: ['Python', 'Pandas', 'Scikit-learn', 'Spotify API'],
-    team: ['Ali Yılmaz', 'Ayşe Demir'],
-    github: 'https://github.com/datasci-club/spotify-analysis',
-    image:
-      'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=800&auto=format&fit=crop',
-  },
-  {
-    id: 102,
-    title: 'Kampüs Yoğunluk Haritası',
-    category: 'Görselleştirme',
-    emoji: '🗺️',
-    desc: 'Yemekhane ve kütüphanenin en dolu olduğu saatleri görselleştirdik.',
-    longDesc:
-      'Öğrencilerin en büyük derdi olan "Kütüphanede yer var mı?" sorusuna veriyle cevap verdik. Wi-Fi bağlantı yoğunluğunu simüle ederek kampüsün ısı haritasını çıkaran interaktif bir Streamlit uygulaması geliştirdik.',
-    tags: ['Geopandas', 'Streamlit', 'Python'],
-    team: ['Mehmet Can', 'Zeynep Su'],
-    github: 'https://github.com/datasci-club/campus-heat',
-    image:
-      'https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?q=80&w=800&auto=format&fit=crop',
-  },
-  {
-    id: 103,
-    title: 'Film Öneri Robotu',
-    category: 'AI / ML',
-    emoji: '🎬',
-    desc: 'Ne izleyeceğine karar veremeyenler için yapay zeka destekli asistan.',
-    longDesc:
-      'Netflix benzeri bir öneri motoru tasarladık. Kullanıcının sevdiği 3 filmi alıp, içerik tabanlı filtreleme (Content-Based Filtering) ve Cosine Similarity kullanarak ona en uygun 5 filmi öneren bir NLP projesi.',
-    tags: ['Scikit-learn', 'NLP', 'Flask'],
-    team: ['Caner Erkin', 'Elif Yıl'],
-    github: 'https://github.com/datasci-club/movie-recs',
-    image:
-      'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=800&auto=format&fit=crop',
-  },
-];
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 50, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 20, scale: 0.9 }}
+      className={`fixed bottom-6 right-6 z-[100] px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 ${
+        type === 'success' 
+          ? 'bg-green-500 text-white' 
+          : type === 'error' 
+          ? 'bg-red-500 text-white' 
+          : 'bg-slate-800 text-white'
+      }`}
+    >
+      {type === 'success' ? (
+        <CheckCircle size={20} />
+      ) : type === 'error' ? (
+        <AlertCircle size={20} />
+      ) : null}
+      <span className="font-medium">{message}</span>
+    </motion.div>
+  );
+};
 
 // --- COMPONENTS ---
 
@@ -420,6 +234,8 @@ const Hero = ({ onNavigate }) => {
 };
 
 const BentoGrid = ({ onNavigate }) => {
+  const { stats, loading } = useData();
+
   return (
     <section id="about" className="py-20 bg-white">
       <div className="container mx-auto px-6 lg:px-12">
@@ -464,19 +280,23 @@ const BentoGrid = ({ onNavigate }) => {
             whileHover={{ y: -5 }}
             className="bg-white border-2 border-slate-100 rounded-3xl p-8 flex flex-col justify-center"
           >
-            <div className="grid grid-cols-2 gap-4">
-              {STATS.map((stat, idx) => (
-                <div key={idx} className="text-center">
-                  <div className="text-2xl mb-1">{stat.emoji}</div>
-                  <div className="font-bold text-slate-800 text-xl">
-                    {stat.value}
+            {loading.stats ? (
+              <StatsSkeleton />
+            ) : (
+              <div className="grid grid-cols-2 gap-4">
+                {stats.map((stat, idx) => (
+                  <div key={stat.id || idx} className="text-center">
+                    <div className="text-2xl mb-1">{stat.emoji}</div>
+                    <div className="font-bold text-slate-800 text-xl">
+                      {stat.value}
+                    </div>
+                    <div className="text-xs text-slate-500 uppercase font-bold">
+                      {stat.label}
+                    </div>
                   </div>
-                  <div className="text-xs text-slate-500 uppercase font-bold">
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </motion.div>
           <motion.div
             whileHover={{ y: -5 }}
@@ -561,7 +381,7 @@ const ProjectCard = ({ project, onClick }) => (
     </h3>
     <p className="text-slate-500 mb-6 flex-grow">{project.desc}</p>
     <div className="flex flex-wrap gap-2 mt-auto">
-      {project.tags.slice(0, 3).map((tag) => (
+      {project.tags?.slice(0, 3).map((tag) => (
         <span
           key={tag}
           className="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold"
@@ -573,72 +393,88 @@ const ProjectCard = ({ project, onClick }) => (
   </div>
 );
 
-const EventsSection = ({ onNavigate }) => (
-  <section id="activities" className="py-20 bg-slate-50">
-    <div className="container mx-auto px-6 lg:px-12">
-      <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
-        <div>
-          <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-3">
-            Son Etkinliklerimiz
+const EventsSection = ({ onNavigate }) => {
+  const { events, loading } = useData();
+
+  return (
+    <section id="activities" className="py-20 bg-slate-50">
+      <div className="container mx-auto px-6 lg:px-12">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+          <div>
+            <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-3">
+              Son Etkinliklerimiz
+            </h2>
+            <p className="text-slate-600">
+              Kampüste gerçekleştirdiğimiz son buluşmalar ve atölyeler.
+            </p>
+          </div>
+          <button
+            onClick={() => onNavigate('events')}
+            className="font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
+          >
+            Tüm Arşiv <ArrowRight size={18} />
+          </button>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {loading.events ? (
+            <SkeletonGrid count={3} SkeletonComponent={EventCardSkeleton} />
+          ) : (
+            events.slice(0, 3).map((event) => (
+              <EventCard
+                key={event.id}
+                event={event}
+                onClick={(id) => onNavigate('event-detail', id)}
+              />
+            ))
+          )}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const ProjectsSection = ({ onNavigate }) => {
+  const { projects, loading } = useData();
+
+  return (
+    <section id="projects" className="py-20 bg-white">
+      <div className="container mx-auto px-6 lg:px-12">
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">
+            Öğrenci Projeleri
           </h2>
-          <p className="text-slate-600">
-            Kampüste gerçekleştirdiğimiz son buluşmalar ve atölyeler.
+          <p className="text-slate-600 text-lg">
+            Derslerde öğrendiğimiz teorileri gerçek hayat problemlerine
+            uyguluyoruz. İşte üyelerimizin geliştirdiği bazı harika işler.
           </p>
         </div>
-        <button
-          onClick={() => onNavigate('events')}
-          className="font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
-        >
-          Tüm Arşiv <ArrowRight size={18} />
-        </button>
-      </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {ALL_EVENTS.slice(0, 3).map((event) => (
-          <EventCard
-            key={event.id}
-            event={event}
-            onClick={(id) => onNavigate('event-detail', id)}
-          />
-        ))}
+        <div className="grid md:grid-cols-3 gap-8">
+          {loading.projects ? (
+            <SkeletonGrid count={3} SkeletonComponent={ProjectCardSkeleton} />
+          ) : (
+            projects.slice(0, 3).map((proj) => (
+              <ProjectCard
+                key={proj.id}
+                project={proj}
+                onClick={(id) => onNavigate('project-detail', id)}
+              />
+            ))
+          )}
+        </div>
+        <div className="text-center mt-12">
+          <button
+            onClick={() => onNavigate('projects')}
+            className="text-indigo-600 font-bold hover:underline"
+          >
+            Tüm Projeleri İncele →
+          </button>
+        </div>
       </div>
-    </div>
-  </section>
-);
-
-const ProjectsSection = ({ onNavigate }) => (
-  <section id="projects" className="py-20 bg-white">
-    <div className="container mx-auto px-6 lg:px-12">
-      <div className="text-center max-w-2xl mx-auto mb-16">
-        <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">
-          Öğrenci Projeleri
-        </h2>
-        <p className="text-slate-600 text-lg">
-          Derslerde öğrendiğimiz teorileri gerçek hayat problemlerine
-          uyguluyoruz. İşte üyelerimizin geliştirdiği bazı harika işler.
-        </p>
-      </div>
-
-      <div className="grid md:grid-cols-3 gap-8">
-        {PROJECTS.map((proj, idx) => (
-          <ProjectCard
-            key={idx}
-            project={proj}
-            onClick={(id) => onNavigate('project-detail', id)}
-          />
-        ))}
-      </div>
-      <div className="text-center mt-12">
-        <button
-          onClick={() => onNavigate('projects')}
-          className="text-indigo-600 font-bold hover:underline"
-        >
-          Tüm Projeleri İncele →
-        </button>
-      </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 const CtaSection = ({ onNavigate }) => (
   <section className="py-20 px-6">
@@ -822,8 +658,10 @@ const HomePage = ({ onNavigate }) => (
 );
 
 const EventsPage = ({ onNavigate }) => {
+  const { events, loading } = useData();
   const [category, setCategory] = useState('all');
-  const filteredEvents = ALL_EVENTS.filter((e) =>
+  
+  const filteredEvents = events.filter((e) =>
     category === 'all' ? true : e.category === category
   );
 
@@ -872,13 +710,17 @@ const EventsPage = ({ onNavigate }) => {
           </div>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredEvents.map((event) => (
-            <EventCard
-              key={event.id}
-              event={event}
-              onClick={(id) => onNavigate('event-detail', id)}
-            />
-          ))}
+          {loading.events ? (
+            <SkeletonGrid count={6} SkeletonComponent={EventCardSkeleton} />
+          ) : (
+            filteredEvents.map((event) => (
+              <EventCard
+                key={event.id}
+                event={event}
+                onClick={(id) => onNavigate('event-detail', id)}
+              />
+            ))
+          )}
         </div>
       </div>
     </motion.div>
@@ -886,12 +728,14 @@ const EventsPage = ({ onNavigate }) => {
 };
 
 const ProjectsPage = ({ onNavigate }) => {
+  const { projects, loading } = useData();
   const [activeCategory, setActiveCategory] = useState('All');
   const categories = ['All', 'Veri Analizi', 'AI / ML', 'Görselleştirme'];
+  
   const filteredProjects =
     activeCategory === 'All'
-      ? PROJECTS
-      : PROJECTS.filter((p) => p.category === activeCategory);
+      ? projects
+      : projects.filter((p) => p.category === activeCategory);
 
   return (
     <motion.div
@@ -932,13 +776,17 @@ const ProjectsPage = ({ onNavigate }) => {
           ))}
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProjects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              onClick={(id) => onNavigate('project-detail', id)}
-            />
-          ))}
+          {loading.projects ? (
+            <SkeletonGrid count={6} SkeletonComponent={ProjectCardSkeleton} />
+          ) : (
+            filteredProjects.map((project) => (
+              <ProjectCard
+                key={project.id}
+                project={project}
+                onClick={(id) => onNavigate('project-detail', id)}
+              />
+            ))
+          )}
         </div>
       </div>
     </motion.div>
@@ -948,6 +796,8 @@ const ProjectsPage = ({ onNavigate }) => {
 // --- YENİ SAYFA: EKİP ---
 
 const TeamPage = ({ onNavigate }) => {
+  const { team, loading } = useData();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -973,45 +823,52 @@ const TeamPage = ({ onNavigate }) => {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {TEAM_MEMBERS.map((member) => (
-            <div
-              key={member.id}
-              onClick={() => onNavigate('team-detail', member.id)}
-              className="bg-white rounded-3xl p-6 border border-slate-100 shadow-lg shadow-slate-100 hover:shadow-xl hover:-translate-y-2 transition-all group text-center cursor-pointer"
-            >
-              <div className="w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-indigo-50 shadow-inner">
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
-                />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-1">
-                {member.name}
-              </h3>
-              <p className="text-indigo-600 font-bold text-sm uppercase tracking-wider mb-2">
-                {member.role}
-              </p>
-              <p className="text-slate-500 text-sm mb-6">{member.department}</p>
+          {loading.team ? (
+            <SkeletonGrid count={6} SkeletonComponent={TeamCardSkeleton} />
+          ) : (
+            team.map((member) => (
+              <div
+                key={member.id}
+                onClick={() => onNavigate('team-detail', member.id)}
+                className="bg-white rounded-3xl p-6 border border-slate-100 shadow-lg shadow-slate-100 hover:shadow-xl hover:-translate-y-2 transition-all group text-center cursor-pointer"
+              >
+                <div className="w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-indigo-50 shadow-inner">
+                  <img
+                    src={member.image}
+                    alt={member.name}
+                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                  />
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 mb-1">
+                  {member.name}
+                </h3>
+                <p className="text-indigo-600 font-bold text-sm uppercase tracking-wider mb-2">
+                  {member.role}
+                </p>
+                <p className="text-slate-500 text-sm mb-6">{member.department}</p>
 
-              <div className="flex justify-center gap-4">
-                <span className="text-indigo-600 text-xs font-bold flex items-center">
-                  Profili İncele <ArrowRight size={14} className="ml-1" />
-                </span>
+                <div className="flex justify-center gap-4">
+                  <span className="text-indigo-600 text-xs font-bold flex items-center">
+                    Profili İncele <ArrowRight size={14} className="ml-1" />
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </motion.div>
   );
 };
 
-// --- YENİ SAYFA: EKİP ÜYESİ DETAY (BLOG STİLİ) ---
+// --- YENİ SAYFA: EKİP ÜYESİ DETAY ---
 
 const TeamMemberDetailPage = ({ memberId, onNavigate }) => {
-  const member = TEAM_MEMBERS.find((m) => m.id === memberId);
-  if (!member) return <div>Bulunamadı</div>;
+  const { getTeamMemberById, loading } = useData();
+  const member = getTeamMemberById(memberId);
+
+  if (loading.team) return <TeamDetailSkeleton />;
+  if (!member) return <div className="pt-32 text-center">Üye bulunamadı</div>;
 
   return (
     <motion.div
@@ -1073,7 +930,7 @@ const TeamMemberDetailPage = ({ memberId, onNavigate }) => {
                       Yetkinlikler
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                      {member.skills.map((skill, i) => (
+                      {member.skills?.map((skill, i) => (
                         <span
                           key={i}
                           className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-lg text-sm font-bold border border-indigo-100"
@@ -1119,8 +976,8 @@ const TeamMemberDetailPage = ({ memberId, onNavigate }) => {
                 <p className="text-slate-600 leading-8 mb-8">
                   {member.role} olarak, ekibimizle birlikte Akdeniz
                   Üniversitesi'nde veri bilimi farkındalığını artırmak için
-                  çalışıyorum. Projelerimizde {member.skills[0]} ve{' '}
-                  {member.skills[1]} gibi teknolojileri kullanarak gerçek hayat
+                  çalışıyorum. Projelerimizde {member.skills?.[0]} ve{' '}
+                  {member.skills?.[1]} gibi teknolojileri kullanarak gerçek hayat
                   problemlerine çözümler üretiyoruz.
                 </p>
 
@@ -1147,8 +1004,53 @@ const TeamMemberDetailPage = ({ memberId, onNavigate }) => {
 
 // --- FORM SAYFALARI ---
 
-const MembershipPage = ({ onNavigate }) => {
+const MembershipPage = ({ onNavigate, showToast }) => {
   const [wantsActiveRole, setWantsActiveRole] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    university: '',
+    department: '',
+    grade: 'Hazırlık',
+    wantsActiveRole: false,
+    preferredTeam: '',
+    expectations: '',
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      await applicationsAPI.submitMembership({
+        ...formData,
+        wantsActiveRole: wantsActiveRole === true,
+      });
+      showToast('Başvurunuz başarıyla gönderildi! 🎉', 'success');
+      // Form'u sıfırla
+      setFormData({
+        fullName: '',
+        email: '',
+        university: '',
+        department: '',
+        grade: 'Hazırlık',
+        wantsActiveRole: false,
+        preferredTeam: '',
+        expectations: '',
+      });
+      setWantsActiveRole(null);
+    } catch (error) {
+      showToast('Başvuru gönderilemedi. Lütfen tekrar deneyin.', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <motion.div
@@ -1179,7 +1081,7 @@ const MembershipPage = ({ onNavigate }) => {
             </p>
           </div>
 
-          <form className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-2">
@@ -1187,6 +1089,10 @@ const MembershipPage = ({ onNavigate }) => {
                 </label>
                 <input
                   type="text"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  required
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                   placeholder="Adınız Soyadınız"
                 />
@@ -1197,6 +1103,10 @@ const MembershipPage = ({ onNavigate }) => {
                 </label>
                 <input
                   type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                   placeholder="ogr.akdeniz.edu.tr uzantılı mail"
                 />
@@ -1210,6 +1120,10 @@ const MembershipPage = ({ onNavigate }) => {
                 </label>
                 <input
                   type="text"
+                  name="university"
+                  value={formData.university}
+                  onChange={handleChange}
+                  required
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                   placeholder="Örn: Akdeniz Üniversitesi"
                 />
@@ -1220,6 +1134,10 @@ const MembershipPage = ({ onNavigate }) => {
                 </label>
                 <input
                   type="text"
+                  name="department"
+                  value={formData.department}
+                  onChange={handleChange}
+                  required
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                   placeholder="Örn: Bilgisayar Mühendisliği"
                 />
@@ -1231,7 +1149,12 @@ const MembershipPage = ({ onNavigate }) => {
                 <label className="block text-sm font-bold text-slate-700 mb-2">
                   Sınıf
                 </label>
-                <select className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                <select 
+                  name="grade"
+                  value={formData.grade}
+                  onChange={handleChange}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                >
                   <option>Hazırlık</option>
                   <option>1. Sınıf</option>
                   <option>2. Sınıf</option>
@@ -1254,6 +1177,7 @@ const MembershipPage = ({ onNavigate }) => {
                     name="active_role"
                     className="w-5 h-5 text-indigo-600 focus:ring-indigo-500"
                     onChange={() => setWantsActiveRole(true)}
+                    checked={wantsActiveRole === true}
                   />
                   <span className="ml-2 text-slate-700">Evet, istiyorum</span>
                 </label>
@@ -1263,6 +1187,7 @@ const MembershipPage = ({ onNavigate }) => {
                     name="active_role"
                     className="w-5 h-5 text-indigo-600 focus:ring-indigo-500"
                     onChange={() => setWantsActiveRole(false)}
+                    checked={wantsActiveRole === false}
                   />
                   <span className="ml-2 text-slate-700">
                     Hayır, sadece üye olacağım
@@ -1281,11 +1206,16 @@ const MembershipPage = ({ onNavigate }) => {
                     <label className="block text-sm font-bold text-slate-700 mb-2 mt-4">
                       Hangi ekipte yer almak istersin?
                     </label>
-                    <select className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
-                      <option>Seçiniz...</option>
-                      <option>Etkinlik & Organizasyon</option>
-                      <option>Sosyal Medya & İletişim</option>
-                      <option>Eğitim & Ar-Ge</option>
+                    <select 
+                      name="preferredTeam"
+                      value={formData.preferredTeam}
+                      onChange={handleChange}
+                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                    >
+                      <option value="">Seçiniz...</option>
+                      <option value="event">Etkinlik & Organizasyon</option>
+                      <option value="social">Sosyal Medya & İletişim</option>
+                      <option value="education">Eğitim & Ar-Ge</option>
                     </select>
                   </motion.div>
                 )}
@@ -1297,13 +1227,28 @@ const MembershipPage = ({ onNavigate }) => {
                 Kulüpten Beklentilerin Neler?
               </label>
               <textarea
+                name="expectations"
+                value={formData.expectations}
+                onChange={handleChange}
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all h-32"
                 placeholder="Bize biraz kendinden ve hedeflerinden bahset..."
               ></textarea>
             </div>
 
-            <button className="w-full bg-indigo-600 text-white font-bold text-lg py-4 rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 flex items-center justify-center gap-2">
-              <Send size={20} /> Başvuruyu Gönder
+            <button 
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-indigo-600 text-white font-bold text-lg py-4 rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 size={20} className="animate-spin" /> Gönderiliyor...
+                </>
+              ) : (
+                <>
+                  <Send size={20} /> Başvuruyu Gönder
+                </>
+              )}
             </button>
           </form>
         </div>
@@ -1312,7 +1257,45 @@ const MembershipPage = ({ onNavigate }) => {
   );
 };
 
-const SponsorshipPage = ({ onNavigate }) => {
+const SponsorshipPage = ({ onNavigate, showToast }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    companyName: '',
+    contactPerson: '',
+    email: '',
+    phone: '',
+    sponsorshipType: '',
+    message: '',
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      await applicationsAPI.submitSponsorship(formData);
+      showToast('Başvurunuz başarıyla gönderildi! En kısa sürede iletişime geçeceğiz.', 'success');
+      // Form'u sıfırla
+      setFormData({
+        companyName: '',
+        contactPerson: '',
+        email: '',
+        phone: '',
+        sponsorshipType: '',
+        message: '',
+      });
+    } catch (error) {
+      showToast('Başvuru gönderilemedi. Lütfen tekrar deneyin.', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -1342,7 +1325,7 @@ const SponsorshipPage = ({ onNavigate }) => {
             </p>
           </div>
 
-          <form className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-2">
@@ -1350,6 +1333,10 @@ const SponsorshipPage = ({ onNavigate }) => {
                 </label>
                 <input
                   type="text"
+                  name="companyName"
+                  value={formData.companyName}
+                  onChange={handleChange}
+                  required
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   placeholder="Firma Ünvanı"
                 />
@@ -1360,6 +1347,10 @@ const SponsorshipPage = ({ onNavigate }) => {
                 </label>
                 <input
                   type="text"
+                  name="contactPerson"
+                  value={formData.contactPerson}
+                  onChange={handleChange}
+                  required
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   placeholder="Ad Soyad"
                 />
@@ -1373,6 +1364,10 @@ const SponsorshipPage = ({ onNavigate }) => {
                 </label>
                 <input
                   type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   placeholder="kurumsal@sirket.com"
                 />
@@ -1383,6 +1378,9 @@ const SponsorshipPage = ({ onNavigate }) => {
                 </label>
                 <input
                   type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   placeholder="0555 555 55 55"
                 />
@@ -1393,13 +1391,19 @@ const SponsorshipPage = ({ onNavigate }) => {
               <label className="block text-sm font-bold text-slate-700 mb-2">
                 Sponsorluk Türü
               </label>
-              <select className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-                <option>Seçiniz...</option>
-                <option>Etkinlik Sponsorluğu</option>
-                <option>Ürün / Hizmet Sponsorluğu</option>
-                <option>Yıllık Ana Sponsorluk</option>
-                <option>Hackathon Ödül Sponsorluğu</option>
-                <option>Diğer</option>
+              <select 
+                name="sponsorshipType"
+                value={formData.sponsorshipType}
+                onChange={handleChange}
+                required
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+              >
+                <option value="">Seçiniz...</option>
+                <option value="event">Etkinlik Sponsorluğu</option>
+                <option value="product">Ürün / Hizmet Sponsorluğu</option>
+                <option value="annual">Yıllık Ana Sponsorluk</option>
+                <option value="hackathon">Hackathon Ödül Sponsorluğu</option>
+                <option value="other">Diğer</option>
               </select>
             </div>
 
@@ -1408,13 +1412,28 @@ const SponsorshipPage = ({ onNavigate }) => {
                 Mesajınız
               </label>
               <textarea
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all h-32"
                 placeholder="İş birliği öneriniz veya notlarınız..."
               ></textarea>
             </div>
 
-            <button className="w-full bg-purple-600 text-white font-bold text-lg py-4 rounded-xl hover:bg-purple-700 transition-all shadow-lg shadow-purple-200 flex items-center justify-center gap-2">
-              <Send size={20} /> İletişime Geç
+            <button 
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-purple-600 text-white font-bold text-lg py-4 rounded-xl hover:bg-purple-700 transition-all shadow-lg shadow-purple-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 size={20} className="animate-spin" /> Gönderiliyor...
+                </>
+              ) : (
+                <>
+                  <Send size={20} /> İletişime Geç
+                </>
+              )}
             </button>
           </form>
         </div>
@@ -1426,8 +1445,11 @@ const SponsorshipPage = ({ onNavigate }) => {
 // --- DETAY SAYFALARI ---
 
 const EventDetailPage = ({ eventId, onNavigate }) => {
-  const event = ALL_EVENTS.find((e) => e.id === eventId);
-  if (!event) return <div>Bulunamadı</div>;
+  const { getEventById, loading } = useData();
+  const event = getEventById(eventId);
+
+  if (loading.events) return <EventDetailSkeleton />;
+  if (!event) return <div className="pt-32 text-center">Etkinlik bulunamadı</div>;
 
   return (
     <motion.div
@@ -1496,70 +1518,73 @@ const EventDetailPage = ({ eventId, onNavigate }) => {
 };
 
 const ProjectDetailPage = ({ projectId, onNavigate }) => {
-  const project = PROJECTS.find((p) => p.id === projectId);
-  if (!project) return <div>Bulunamadı</div>;
+  const { getProjectById, loading } = useData();
+  const project = getProjectById(projectId);
+
+  if (loading.projects) return <ProjectDetailSkeleton />;
+  if (!project) return <div className="pt-32 text-center">Proje bulunamadı</div>;
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="pt-32 pb-20 min-h-screen bg-slate-50"
+      className="pt-32 pb-20 min-h-screen bg-slate-50 overflow-x-hidden"
     >
-      <div className="container mx-auto px-6 lg:px-12">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-12">
         <button
           onClick={() => onNavigate('projects')}
           className="flex items-center text-slate-500 hover:text-indigo-600 transition-colors mb-8 font-medium"
         >
           <ChevronLeft size={20} className="mr-1" /> Projelere Dön
         </button>
-        <div className="bg-white rounded-[2.5rem] p-8 lg:p-12 shadow-sm border border-slate-100">
-          <div className="grid lg:grid-cols-2 gap-12">
+        <div className="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 lg:p-12 shadow-sm border border-slate-100">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
             <div>
-              <div className="text-6xl mb-6 bg-slate-50 w-24 h-24 rounded-3xl flex items-center justify-center">
+              <div className="text-4xl sm:text-6xl mb-4 sm:mb-6 bg-slate-50 w-16 h-16 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl flex items-center justify-center">
                 {project.emoji}
               </div>
-              <span className="text-indigo-600 font-bold uppercase tracking-wider text-sm">
+              <span className="text-indigo-600 font-bold uppercase tracking-wider text-xs sm:text-sm">
                 {project.category}
               </span>
-              <h1 className="text-4xl lg:text-5xl font-extrabold text-slate-900 mt-2 mb-6">
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 mt-2 mb-4 sm:mb-6">
                 {project.title}
               </h1>
-              <p className="text-slate-600 text-lg leading-relaxed mb-8">
+              <p className="text-slate-600 text-base sm:text-lg leading-relaxed mb-6 sm:mb-8">
                 {project.longDesc}
               </p>
-              <h3 className="font-bold text-slate-900 mb-4">
+              <h3 className="font-bold text-slate-900 mb-3 sm:mb-4 text-sm sm:text-base">
                 Kullanılan Teknolojiler:
               </h3>
-              <div className="flex flex-wrap gap-2 mb-8">
-                {project.tags.map((tag) => (
+              <div className="flex flex-wrap gap-2 mb-6 sm:mb-8">
+                {project.tags?.map((tag) => (
                   <span
                     key={tag}
-                    className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-bold text-sm border border-slate-200"
+                    className="px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-100 text-slate-700 rounded-lg font-bold text-xs sm:text-sm border border-slate-200"
                   >
                     {tag}
                   </span>
                 ))}
               </div>
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <a
                   href={project.github}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-all"
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-all"
                 >
                   <Github size={20} /> GitHub'da İncele
                 </a>
-                <button className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-all">
+                <button className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-all">
                   <Share2 size={20} /> Paylaş
                 </button>
               </div>
             </div>
-            <div>
+            <div className="order-first lg:order-last">
               <img
                 src={project.image}
                 alt={project.title}
-                className="w-full h-full object-cover rounded-3xl shadow-lg"
+                className="w-full h-64 sm:h-80 lg:h-full object-cover rounded-2xl sm:rounded-3xl shadow-lg"
               />
             </div>
           </div>
@@ -1567,17 +1592,17 @@ const ProjectDetailPage = ({ projectId, onNavigate }) => {
             <h3 className="text-2xl font-bold text-slate-900 mb-8">
               Proje Ekibi
             </h3>
-            <div className="flex gap-6">
-              {project.team.map((member, i) => (
+            <div className="flex flex-wrap gap-4 sm:gap-6">
+              {project.team?.map((member, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl pr-8"
+                  className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl pr-6 sm:pr-8 min-w-0 flex-shrink-0"
                 >
-                  <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-lg">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-base sm:text-lg flex-shrink-0">
                     {member.charAt(0)}
                   </div>
-                  <div>
-                    <p className="font-bold text-slate-900">{member}</p>
+                  <div className="min-w-0">
+                    <p className="font-bold text-slate-900 text-sm sm:text-base truncate">{member}</p>
                     <p className="text-xs text-slate-500 uppercase font-bold">
                       Contributor
                     </p>
@@ -1595,11 +1620,16 @@ const ProjectDetailPage = ({ projectId, onNavigate }) => {
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [detailId, setDetailId] = useState(null);
+  const [toast, setToast] = useState(null);
 
   const navigateTo = (page, id = null) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setCurrentPage(page);
     if (id) setDetailId(id);
+  };
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
   };
 
   return (
@@ -1620,10 +1650,10 @@ export default function App() {
           <TeamPage key="team" onNavigate={navigateTo} />
         )}
         {currentPage === 'membership' && (
-          <MembershipPage key="membership" onNavigate={navigateTo} />
+          <MembershipPage key="membership" onNavigate={navigateTo} showToast={showToast} />
         )}
         {currentPage === 'sponsorship' && (
-          <SponsorshipPage key="sponsorship" onNavigate={navigateTo} />
+          <SponsorshipPage key="sponsorship" onNavigate={navigateTo} showToast={showToast} />
         )}
 
         {currentPage === 'event-detail' && (
@@ -1650,6 +1680,17 @@ export default function App() {
       </AnimatePresence>
 
       <Footer onNavigate={navigateTo} />
+
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toast && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
