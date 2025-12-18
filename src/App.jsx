@@ -619,6 +619,14 @@ const Footer = ({ onNavigate }) => (
                 Sponsorluk
               </button>
             </li>
+            <li>
+              <button
+                onClick={() => onNavigate('partnership')}
+                className="hover:text-indigo-600 transition-colors"
+              >
+                Paydaşlık
+              </button>
+            </li>
           </ul>
         </div>
         <div>
@@ -1333,6 +1341,7 @@ const MembershipPage = ({ onNavigate, showToast }) => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
+    phone: '',
     university: '',
     department: '',
     grade: 'Hazırlık',
@@ -1360,6 +1369,7 @@ const MembershipPage = ({ onNavigate, showToast }) => {
       setFormData({
         fullName: '',
         email: '',
+        phone: '',
         university: '',
         department: '',
         grade: 'Hazırlık',
@@ -1434,6 +1444,21 @@ const MembershipPage = ({ onNavigate, showToast }) => {
                   placeholder="ogr.akdeniz.edu.tr uzantılı mail"
                 />
               </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-bold text-slate-700 mb-2">
+                Telefon Numarası
+              </label>
+              <input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                required
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                placeholder="05XX XXX XX XX"
+              />
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
@@ -1765,6 +1790,232 @@ const SponsorshipPage = ({ onNavigate, showToast }) => {
   );
 };
 
+// --- PAYDAŞLIK SAYFASI ---
+
+const PartnershipPage = ({ onNavigate, showToast }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    organizationName: '',
+    organizationType: '',
+    contactPerson: '',
+    email: '',
+    phone: '',
+    website: '',
+    partnershipType: '',
+    message: '',
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      await applicationsAPI.submitPartnership(formData);
+      showToast('Paydaşlık başvurunuz başarıyla gönderildi! 🤝', 'success');
+      setFormData({
+        organizationName: '',
+        organizationType: '',
+        contactPerson: '',
+        email: '',
+        phone: '',
+        website: '',
+        partnershipType: '',
+        message: '',
+      });
+    } catch (error) {
+      showToast('Başvuru gönderilemedi. Lütfen tekrar deneyin.', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
+      className="pt-32 pb-20 min-h-screen bg-slate-50"
+    >
+      <div className="container mx-auto px-6 lg:px-12">
+        <button
+          onClick={() => onNavigate('home')}
+          className="flex items-center text-slate-500 hover:text-indigo-600 transition-colors mb-8 font-medium"
+        >
+          <ChevronLeft size={20} className="mr-1" /> Ana Sayfaya Dön
+        </button>
+
+        <div className="max-w-3xl mx-auto bg-white rounded-[2.5rem] p-8 lg:p-12 shadow-sm border border-slate-100">
+          <div className="text-center mb-10">
+            <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600 mx-auto mb-6">
+              <Users size={32} />
+            </div>
+            <h1 className="text-3xl lg:text-4xl font-extrabold text-slate-900 mb-4">
+              Paydaş Ol
+            </h1>
+            <p className="text-slate-600 text-lg">
+              Topluluklar, STK'lar, kurumlar ve üniversitelerle iş birliği yapmaktan mutluluk duyarız. 
+              Birlikte daha güçlüyüz!
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2">
+                  Kurum / Topluluk Adı *
+                </label>
+                <input
+                  type="text"
+                  name="organizationName"
+                  value={formData.organizationName}
+                  onChange={handleChange}
+                  required
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                  placeholder="Örn: XYZ Topluluğu"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2">
+                  Kurum Türü *
+                </label>
+                <select
+                  name="organizationType"
+                  value={formData.organizationType}
+                  onChange={handleChange}
+                  required
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                >
+                  <option value="">Seçiniz...</option>
+                  <option value="university_club">Üniversite Topluluğu</option>
+                  <option value="ngo">Sivil Toplum Kuruluşu (STK)</option>
+                  <option value="company">Şirket / Firma</option>
+                  <option value="institution">Kamu Kurumu</option>
+                  <option value="other">Diğer</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2">
+                  Yetkili Kişi Adı *
+                </label>
+                <input
+                  type="text"
+                  name="contactPerson"
+                  value={formData.contactPerson}
+                  onChange={handleChange}
+                  required
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                  placeholder="Ad Soyad"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2">
+                  E-Posta *
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                  placeholder="iletisim@kurum.com"
+                />
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2">
+                  Telefon
+                </label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                  placeholder="05XX XXX XX XX"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2">
+                  Web Sitesi
+                </label>
+                <input
+                  type="url"
+                  name="website"
+                  value={formData.website}
+                  onChange={handleChange}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                  placeholder="https://..."
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-bold text-slate-700 mb-2">
+                Paydaşlık Türü *
+              </label>
+              <select
+                name="partnershipType"
+                value={formData.partnershipType}
+                onChange={handleChange}
+                required
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+              >
+                <option value="">Seçiniz...</option>
+                <option value="event_collab">Ortak Etkinlik Düzenleme</option>
+                <option value="project_collab">Ortak Proje Geliştirme</option>
+                <option value="knowledge_share">Bilgi ve Deneyim Paylaşımı</option>
+                <option value="membership_exchange">Karşılıklı Üye Katılımı</option>
+                <option value="sponsorship">Sponsorluk</option>
+                <option value="other">Diğer</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-bold text-slate-700 mb-2">
+                Mesajınız
+              </label>
+              <textarea
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all h-32"
+                placeholder="İş birliği öneriniz, beklentileriniz veya eklemek istedikleriniz..."
+              ></textarea>
+            </div>
+
+            <button 
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-emerald-600 text-white font-bold text-lg py-4 rounded-xl hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 size={20} className="animate-spin" /> Gönderiliyor...
+                </>
+              ) : (
+                <>
+                  <Send size={20} /> Başvuruyu Gönder
+                </>
+              )}
+            </button>
+          </form>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 // --- DETAY SAYFALARI ---
 
 const EventDetailPage = ({ eventId, onNavigate }) => {
@@ -1980,6 +2231,9 @@ export default function App() {
         )}
         {currentPage === 'about' && (
           <AboutPage key="about" onNavigate={navigateTo} />
+        )}
+        {currentPage === 'partnership' && (
+          <PartnershipPage key="partnership" onNavigate={navigateTo} showToast={showToast} />
         )}
 
         {currentPage === 'event-detail' && (

@@ -146,12 +146,28 @@ export const applicationsAPI = {
     body: JSON.stringify({
       full_name: data.fullName,
       email: data.email,
+      phone: data.phone,
       university: data.university,
       department: data.department,
       grade: data.grade,
       wants_active_role: data.wantsActiveRole,
       preferred_team: data.preferredTeam,
       expectations: data.expectations,
+    }),
+  }),
+  
+  // Paydaşlık başvurusu gönder
+  submitPartnership: (data) => fetchAPI('/applications/partnership', {
+    method: 'POST',
+    body: JSON.stringify({
+      organization_name: data.organizationName,
+      organization_type: data.organizationType,
+      contact_person: data.contactPerson,
+      email: data.email,
+      phone: data.phone,
+      website: data.website,
+      partnership_type: data.partnershipType,
+      message: data.message,
     }),
   }),
   
