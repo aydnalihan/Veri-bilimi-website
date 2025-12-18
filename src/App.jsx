@@ -1120,44 +1120,164 @@ const AboutPage = ({ onNavigate }) => (
           <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center">
             <BookOpen size={28} className="text-slate-600" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900">Topluluk Tüzüğü</h2>
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900">Topluluk İç Tüzüğü</h2>
+            <p className="text-slate-500 text-sm">Akdeniz Üniversitesi Veri Bilimi Topluluğu</p>
+          </div>
         </div>
         
-        <div className="space-y-6 text-slate-600">
-          <div>
-            <h3 className="font-semibold text-slate-800 mb-2">Madde 1 - Topluluğun Adı ve Amacı</h3>
-            <p>
-              Akdeniz Veri Bilimi Topluluğu, Akdeniz Üniversitesi bünyesinde faaliyet gösteren, 
-              veri bilimi, yapay zeka ve makine öğrenmesi alanlarında öğrencileri eğitmek ve 
-              geliştirmek amacıyla kurulmuş bir öğrenci topluluğudur.
-            </p>
+        <div className="space-y-8 text-slate-600">
+          {/* Bölüm 1 */}
+          <div className="border-l-4 border-indigo-500 pl-6">
+            <h3 className="text-lg font-bold text-indigo-600 mb-4">BİRİNCİ BÖLÜM: Amaç, Vizyon, Misyon ve Tanımlar</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-semibold text-slate-800">MADDE 1 - Topluluğun Adı ve Merkezi</h4>
+                <p className="text-sm mt-1">
+                  Topluluğun adı "Akdeniz Veri Bilimi Topluluğu"dur. Merkezi Akdeniz Üniversitesi Kampüsü, Antalya'dır.
+                </p>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-slate-800">MADDE 2 - Dayanak</h4>
+                <p className="text-sm mt-1">
+                  Bu tüzük, Akdeniz Üniversitesi Senatosu tarafından kabul edilen Öğrenci Toplulukları Yönergesi ve 
+                  Yükseköğretim Kurumları Mediko-Sosyal Sağlık, Kültür ve Spor İşleri Dairesi Uygulama Yönetmeliği 
+                  hükümlerine dayanılarak hazırlanmıştır.
+                </p>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-slate-800">MADDE 3 - Topluluğun Amacı ve Hedefleri</h4>
+                <p className="text-sm mt-1">
+                  Topluluk, öğrencilerin veri okuryazarlığı, analitik düşünme ve disiplinler arası problem çözme 
+                  becerilerini geliştirmeyi amaçlar. Veri biliminin yalnızca bilgisayar bilimleriyle sınırlı olmadığını, 
+                  mühendislik, sosyal bilimler, sağlık ve yönetim gibi farklı alanlarda da uygulanabilir bir disiplin olduğunu vurgular.
+                </p>
+                <ul className="text-sm mt-2 ml-4 list-disc space-y-1">
+                  <li>Uygulamalı eğitimler, seminerler ve atölyeler düzenleyerek veri bilimi becerilerinin gelişimini desteklemek</li>
+                  <li>Gerçek hayat problemleri üzerinden vaka analizleri yaparak pratik deneyim kazandırmak</li>
+                  <li>Disiplinler arası iş birliklerini teşvik ederek paylaşım ve üretkenliği artırmak</li>
+                  <li>Sosyal sorumluluk projeleriyle topluma katkı sağlamak</li>
+                </ul>
+              </div>
+            </div>
           </div>
-          
-          <div>
-            <h3 className="font-semibold text-slate-800 mb-2">Madde 2 - Üyelik</h3>
-            <p>
-              Akdeniz Üniversitesi'nde kayıtlı tüm öğrenciler topluluğa üye olabilir. 
-              Üyelik başvuruları yönetim kurulu tarafından değerlendirilir. Aktif üyelik için 
-              toplantılara ve etkinliklere düzenli katılım beklenmektedir.
-            </p>
+
+          {/* Bölüm 2 */}
+          <div className="border-l-4 border-emerald-500 pl-6">
+            <h3 className="text-lg font-bold text-emerald-600 mb-4">İKİNCİ BÖLÜM: Üyelik Esasları</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-semibold text-slate-800">MADDE 5 - Üyelik Koşulları ve Türleri</h4>
+                <div className="text-sm mt-1 space-y-2">
+                  <p><strong>Asil Üyelik:</strong> Akdeniz Üniversitesi'ne kayıtlı ön lisans, lisans ve lisansüstü öğrencileri, 
+                  bölüm ayrımı olmaksızın üye olabilirler. Üyelik başvurusu Yönetim Kurulu tarafından değerlendirilir.</p>
+                  <p><strong>Fahri Üyelik:</strong> Topluluğa maddi veya manevi katkıda bulunan akademisyenler, mezunlar ve 
+                  sektör temsilcileri, Yönetim Kurulu kararı ile fahri üye olabilirler. Fahri üyelerin seçme ve seçilme hakkı yoktur.</p>
+                </div>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-slate-800">MADDE 6 - Üyeliğin Sona Ermesi</h4>
+                <div className="text-sm mt-1 space-y-2">
+                  <p><strong>Kendiliğinden Sona Erme:</strong> Öğrencinin mezun olması veya üniversite ile ilişiğinin kesilmesi durumunda üyeliği kendiliğinden sona erer.</p>
+                  <p><strong>Çıkarılma:</strong> Topluluk amaçlarına aykırı hareket eden, tüzük kurallarını ihlal eden, genel ahlak kurallarına uymayan 
+                  veya üniversite disiplin cezası alan üyeler Genel Kurul oylaması sonucunda topluluktan çıkarılabilir.</p>
+                </div>
+              </div>
+            </div>
           </div>
-          
-          <div>
-            <h3 className="font-semibold text-slate-800 mb-2">Madde 3 - Yönetim Yapısı</h3>
-            <p>
-              Topluluk; Başkan, Başkan Yardımcısı, Genel Sekreter ve birim koordinatörlerinden 
-              oluşan bir yönetim kurulu tarafından yönetilir. Yönetim kurulu her akademik yıl 
-              başında seçimle belirlenir.
-            </p>
+
+          {/* Bölüm 3 */}
+          <div className="border-l-4 border-amber-500 pl-6">
+            <h3 className="text-lg font-bold text-amber-600 mb-4">ÜÇÜNCÜ BÖLÜM: Yönetim Organları</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-semibold text-slate-800">MADDE 8 - Genel Kurul</h4>
+                <p className="text-sm mt-1">
+                  Topluluğun en yetkili karar organıdır ve kayıtlı tüm asil üyelerden oluşur. Her eğitim-öğretim yılının başında 
+                  olağan olarak toplanır. Yönetim ve Denetim Kurullarını seçer, dönem faaliyet raporlarını ibra eder.
+                </p>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-slate-800">MADDE 9 - Yönetim Kurulu</h4>
+                <p className="text-sm mt-1">
+                  Genel Kurul tarafından seçilen 1 Başkan, 1 Başkan Yardımcısı ve 3 Asil Üye olmak üzere toplam 5 asil ve 5 yedek üyeden oluşur. 
+                  Görev süresi 1 yıldır. Akademik takvim süresince haftada en az bir kez toplanır. Salt çoğunlukla karar alınır.
+                </p>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-slate-800">MADDE 10 - Denetim Kurulu</h4>
+                <p className="text-sm mt-1">
+                  Genel Kurul tarafından seçilen 5 asil ve 5 yedek üyeden oluşur. Topluluğun evraklarını, karar defterlerini ve 
+                  faaliyetlerini tüzük ve yönergeye uygunluk açısından denetler. Yılda en az iki kez Yönetim Kurulu'na rapor sunar.
+                </p>
+              </div>
+            </div>
           </div>
-          
-          <div>
-            <h3 className="font-semibold text-slate-800 mb-2">Madde 4 - Etkinlikler</h3>
-            <p>
-              Topluluk; workshop'lar, bootcamp'ler, hackathon'lar, panel söyleşileri ve 
-              sosyal etkinlikler düzenler. Tüm etkinlikler üyelere açıktır ve bazı etkinlikler 
-              üniversite dışından katılımcılara da açık olabilir.
-            </p>
+
+          {/* Bölüm 4 */}
+          <div className="border-l-4 border-purple-500 pl-6">
+            <h3 className="text-lg font-bold text-purple-600 mb-4">DÖRDÜNCÜ BÖLÜM: Görev Birimleri</h3>
+            
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="bg-slate-50 rounded-xl p-4">
+                <h4 className="font-semibold text-slate-800 mb-2">🎨 Sosyal Medya ve Tasarım Ekibi</h4>
+                <p className="text-sm">
+                  Topluluğun dijital yüzünü yönetir. Instagram, LinkedIn ve Twitter hesapları için içerik üretir. 
+                  Etkinlik afişlerini ve duyuru görsellerini tasarlar.
+                </p>
+              </div>
+              
+              <div className="bg-slate-50 rounded-xl p-4">
+                <h4 className="font-semibold text-slate-800 mb-2">🔬 Araştırma ve Geliştirme (Ar-Ge) Ekibi</h4>
+                <p className="text-sm">
+                  Veri bilimi alanındaki en güncel teknolojileri araştırır. Topluluk adına teknik projeler geliştirir. 
+                  Proje tabanlı öğrenme gruplarını koordine eder.
+                </p>
+              </div>
+              
+              <div className="bg-slate-50 rounded-xl p-4">
+                <h4 className="font-semibold text-slate-800 mb-2">🎯 Etkinlik ve Organizasyon Ekibi</h4>
+                <p className="text-sm">
+                  Seminerler, workshoplar, tanışma toplantıları ve sosyal etkinliklerin planlanmasını yürütür. 
+                  Etkinlik takvimini oluşturur ve lojistik işlemleri koordine eder.
+                </p>
+              </div>
+              
+              <div className="bg-slate-50 rounded-xl p-4">
+                <h4 className="font-semibold text-slate-800 mb-2">🤝 Sponsorluk Ekibi</h4>
+                <p className="text-sm">
+                  Topluluğun etkinlikleri ve projeleri için kaynak yaratır. Sektördeki firmalarla iletişim kurarak 
+                  iş birliklerini yönetir. Kariyer günleri ve sektör buluşmaları düzenler.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Topluluk Kuralları */}
+          <div className="bg-gradient-to-r from-slate-100 to-slate-50 rounded-xl p-6">
+            <h3 className="text-lg font-bold text-slate-800 mb-4">📋 Topluluk Kuralları</h3>
+            <ul className="text-sm space-y-2">
+              <li className="flex items-start gap-2">
+                <span className="text-indigo-500 mt-1">•</span>
+                <span>Toplulukla ilgili tüm kararlar Genel Kurul tarafından alınır.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-indigo-500 mt-1">•</span>
+                <span>Düzenlenen etkinliklere 3 defa mazeretsiz katılım göstermeyen kişilerin Kurul üyeliği pasif üye olarak işaretlenebilir.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-indigo-500 mt-1">•</span>
+                <span>Genel Kurul üyeleri 5 topluluktan fazlasında görev alamaz.</span>
+              </li>
+            </ul>
           </div>
         </div>
       </motion.div>
