@@ -530,19 +530,13 @@ const Footer = ({ onNavigate }) => (
           </p>
           <div className="flex gap-4">
             <a
-              href="#"
+              href="https://www.instagram.com/akdenizveribilimi/"
               className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
             >
               <Instagram size={20} />
             </a>
             <a
-              href="#"
-              className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-            >
-              <Twitter size={20} />
-            </a>
-            <a
-              href="#"
+              href="https://www.linkedin.com/company/akdeniz-veri-bilimi-toplulugu/posts/?feedView=all"
               className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-600 hover:bg-blue-100 hover:text-blue-700 transition-colors"
             >
               <Linkedin size={20} />
@@ -582,8 +576,16 @@ const Footer = ({ onNavigate }) => (
           <h4 className="font-bold text-slate-900 mb-4">Topluluk</h4>
           <ul className="space-y-2 text-sm text-slate-500">
             <li>
+              <button
+                onClick={() => onNavigate('about')}
+                className="hover:text-indigo-600 transition-colors"
+              >
+                Hakkımızda
+              </button>
+            </li>
+            <li>
               <a
-                href="https://instagram.com/datasci-club"
+                href="https://www.instagram.com/akdenizveribilimi/"
                 target="_blank"
                 rel="noreferrer"
                 className="hover:text-indigo-600 transition-colors"
@@ -592,8 +594,13 @@ const Footer = ({ onNavigate }) => (
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-indigo-600 transition-colors">
-                WhatsApp Grubu
+              <a
+                href="https://www.linkedin.com/company/akdeniz-veri-bilimi-toplulugu/"
+                target="_blank"
+                rel="noreferrer"
+                className="hover:text-indigo-600 transition-colors"
+              >
+                LinkedIn
               </a>
             </li>
             <li>
@@ -1001,6 +1008,202 @@ const TeamMemberDetailPage = ({ memberId, onNavigate }) => {
     </motion.div>
   );
 };
+
+// --- HAKKIMIZDA SAYFASI ---
+
+const AboutPage = ({ onNavigate }) => (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    className="pt-32 pb-20 min-h-screen bg-gradient-to-b from-slate-50 to-white"
+  >
+    <div className="container mx-auto px-4 sm:px-6 lg:px-12">
+      {/* Geri Butonu */}
+      <button
+        onClick={() => onNavigate('home')}
+        className="flex items-center gap-2 text-slate-500 hover:text-indigo-600 transition-colors mb-8"
+      >
+        <ChevronLeft size={20} />
+        <span>Ana Sayfaya Dön</span>
+      </button>
+
+      {/* Hero Section */}
+      <div className="text-center mb-16">
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 px-4 py-2 rounded-full text-sm font-semibold mb-6"
+        >
+          <Sparkles size={16} />
+          <span>Akdeniz Veri Bilimi Topluluğu</span>
+        </motion.div>
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 mb-6">
+          Hakkımızda
+        </h1>
+        <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+          Veri bilimi ve yapay zeka alanında Türkiye'nin en aktif öğrenci topluluklarından biri olmayı hedefliyoruz.
+        </p>
+      </div>
+
+      {/* Misyon & Vizyon */}
+      <div className="grid md:grid-cols-2 gap-8 mb-16">
+        <motion.div
+          initial={{ y: 30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="bg-white rounded-3xl p-8 shadow-lg shadow-slate-100 border border-slate-100"
+        >
+          <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6">
+            <Zap size={32} className="text-white" />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">Misyonumuz</h2>
+          <p className="text-slate-600 leading-relaxed">
+            Akdeniz Üniversitesi öğrencilerini veri bilimi, yapay zeka ve makine öğrenmesi alanlarında 
+            eğitmek, projeler geliştirmelerini sağlamak ve sektörle bağlantı kurmalarına yardımcı olmak. 
+            Öğrencilerin teorik bilgilerini pratik uygulamalarla pekiştirmelerini ve mezuniyet sonrası 
+            kariyer yolculuklarına hazırlanmalarını destekliyoruz.
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ y: 30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="bg-white rounded-3xl p-8 shadow-lg shadow-slate-100 border border-slate-100"
+        >
+          <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6">
+            <Globe size={32} className="text-white" />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">Vizyonumuz</h2>
+          <p className="text-slate-600 leading-relaxed">
+            Türkiye'nin veri bilimi alanında öncü üniversite topluluklarından biri olmak ve 
+            uluslararası arenada tanınan projeler üretmek. Öğrencilerimizin global şirketlerde 
+            istihdam edilmesini, kendi girişimlerini kurmalarını ve akademik başarılar elde etmelerini 
+            sağlayacak bir ekosistem oluşturmayı hedefliyoruz.
+          </p>
+        </motion.div>
+      </div>
+
+      {/* Değerlerimiz */}
+      <motion.div
+        initial={{ y: 30, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.3 }}
+        className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-8 md:p-12 text-white mb-16"
+      >
+        <h2 className="text-3xl font-bold mb-8 text-center">Değerlerimiz</h2>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { emoji: '🎓', title: 'Sürekli Öğrenme', desc: 'Her gün yeni bir şey öğrenmeye açığız' },
+            { emoji: '🤝', title: 'İşbirliği', desc: 'Birlikte daha güçlüyüz' },
+            { emoji: '💡', title: 'Yenilikçilik', desc: 'Sınırları zorlayan fikirler üretiyoruz' },
+            { emoji: '🌟', title: 'Kapsayıcılık', desc: 'Herkese eşit fırsat sunuyoruz' },
+          ].map((item, i) => (
+            <div key={i} className="text-center">
+              <div className="text-4xl mb-3">{item.emoji}</div>
+              <h3 className="font-bold text-lg mb-2">{item.title}</h3>
+              <p className="text-indigo-100 text-sm">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Tüzük */}
+      <motion.div
+        initial={{ y: 30, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.4 }}
+        className="bg-white rounded-3xl p-8 md:p-12 shadow-lg shadow-slate-100 border border-slate-100 mb-16"
+      >
+        <div className="flex items-center gap-4 mb-8">
+          <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center">
+            <BookOpen size={28} className="text-slate-600" />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900">Topluluk Tüzüğü</h2>
+        </div>
+        
+        <div className="space-y-6 text-slate-600">
+          <div>
+            <h3 className="font-semibold text-slate-800 mb-2">Madde 1 - Topluluğun Adı ve Amacı</h3>
+            <p>
+              Akdeniz Veri Bilimi Topluluğu, Akdeniz Üniversitesi bünyesinde faaliyet gösteren, 
+              veri bilimi, yapay zeka ve makine öğrenmesi alanlarında öğrencileri eğitmek ve 
+              geliştirmek amacıyla kurulmuş bir öğrenci topluluğudur.
+            </p>
+          </div>
+          
+          <div>
+            <h3 className="font-semibold text-slate-800 mb-2">Madde 2 - Üyelik</h3>
+            <p>
+              Akdeniz Üniversitesi'nde kayıtlı tüm öğrenciler topluluğa üye olabilir. 
+              Üyelik başvuruları yönetim kurulu tarafından değerlendirilir. Aktif üyelik için 
+              toplantılara ve etkinliklere düzenli katılım beklenmektedir.
+            </p>
+          </div>
+          
+          <div>
+            <h3 className="font-semibold text-slate-800 mb-2">Madde 3 - Yönetim Yapısı</h3>
+            <p>
+              Topluluk; Başkan, Başkan Yardımcısı, Genel Sekreter ve birim koordinatörlerinden 
+              oluşan bir yönetim kurulu tarafından yönetilir. Yönetim kurulu her akademik yıl 
+              başında seçimle belirlenir.
+            </p>
+          </div>
+          
+          <div>
+            <h3 className="font-semibold text-slate-800 mb-2">Madde 4 - Etkinlikler</h3>
+            <p>
+              Topluluk; workshop'lar, bootcamp'ler, hackathon'lar, panel söyleşileri ve 
+              sosyal etkinlikler düzenler. Tüm etkinlikler üyelere açıktır ve bazı etkinlikler 
+              üniversite dışından katılımcılara da açık olabilir.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* İletişim CTA */}
+      <motion.div
+        initial={{ y: 30, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="text-center bg-slate-50 rounded-3xl p-8 md:p-12"
+      >
+        <h2 className="text-2xl font-bold text-slate-900 mb-4">Bize Katılın!</h2>
+        <p className="text-slate-600 mb-8 max-w-2xl mx-auto">
+          Veri bilimi dünyasına adım atmak, projeler geliştirmek ve harika bir toplulukun 
+          parçası olmak için hemen başvur.
+        </p>
+        <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <button
+            onClick={() => onNavigate('membership')}
+            className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl font-bold shadow-lg shadow-indigo-200 hover:shadow-xl hover:scale-105 transition-all"
+          >
+            Üye Ol
+          </button>
+          <div className="flex justify-center gap-4">
+            <a
+              href="https://www.instagram.com/akdenizveribilimi/"
+              target="_blank"
+              rel="noreferrer"
+              className="w-14 h-14 rounded-2xl bg-white shadow-lg flex items-center justify-center text-pink-600 hover:scale-110 transition-transform border border-slate-100"
+            >
+              <Instagram size={24} />
+            </a>
+            <a
+              href="https://www.linkedin.com/company/akdeniz-veri-bilimi-toplulugu/"
+              target="_blank"
+              rel="noreferrer"
+              className="w-14 h-14 rounded-2xl bg-white shadow-lg flex items-center justify-center text-blue-700 hover:scale-110 transition-transform border border-slate-100"
+            >
+              <Linkedin size={24} />
+            </a>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  </motion.div>
+);
 
 // --- FORM SAYFALARI ---
 
@@ -1654,6 +1857,9 @@ export default function App() {
         )}
         {currentPage === 'sponsorship' && (
           <SponsorshipPage key="sponsorship" onNavigate={navigateTo} showToast={showToast} />
+        )}
+        {currentPage === 'about' && (
+          <AboutPage key="about" onNavigate={navigateTo} />
         )}
 
         {currentPage === 'event-detail' && (
