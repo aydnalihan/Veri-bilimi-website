@@ -2123,35 +2123,35 @@ const ShareModal = ({ isOpen, projectId, projectTitle, onClose, showToast }) => 
   return (
     <AnimatePresence>
       {isOpen && (
-        <>
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 z-40"
+            className="absolute inset-0 bg-black/50"
           />
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4"
+            className="relative z-10 mx-4 w-full max-w-lg rounded-2xl bg-white shadow-2xl p-6 sm:p-8 max-h-[85vh] overflow-y-auto"
           >
             <h2 className="text-2xl font-bold text-slate-900 mb-6">Projeyi Paylas</h2>
             <div className="mb-6">
               <label className="block text-sm font-bold text-slate-700 mb-3">
                 Paylasilabilir Link
               </label>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   type="text"
                   readOnly
                   value={shareUrl}
-                  className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-600 font-mono"
+                  className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-xs sm:text-sm text-slate-600 font-mono overflow-hidden"
                 />
                 <button
                   onClick={copyToClipboard}
-                  className="px-4 py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition-all flex items-center gap-2 whitespace-nowrap"
+                  className="px-4 py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 whitespace-nowrap"
                 >
                   Kopyala
                 </button>
@@ -2159,12 +2159,12 @@ const ShareModal = ({ isOpen, projectId, projectTitle, onClose, showToast }) => 
             </div>
             <div className="mb-6">
               <p className="text-sm font-bold text-slate-700 mb-3">Hizli Paylas</p>
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <a
                   href={shareLinks.whatsapp}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-50 text-green-700 border border-green-200 rounded-lg hover:bg-green-100 transition-all font-bold text-sm"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-50 text-green-700 border border-green-200 rounded-lg hover:bg-green-100 transition-all font-bold text-xs sm:text-sm"
                 >
                   <Send size={18} /> WhatsApp
                 </a>
@@ -2172,7 +2172,7 @@ const ShareModal = ({ isOpen, projectId, projectTitle, onClose, showToast }) => 
                   href={shareLinks.twitter}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-all font-bold text-sm"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-all font-bold text-xs sm:text-sm"
                 >
                   <Twitter size={18} /> X
                 </a>
@@ -2180,7 +2180,7 @@ const ShareModal = ({ isOpen, projectId, projectTitle, onClose, showToast }) => 
                   href={shareLinks.linkedin}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-all font-bold text-sm"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-all font-bold text-xs sm:text-sm"
                 >
                   <Linkedin size={18} /> LinkedIn
                 </a>
@@ -2193,7 +2193,7 @@ const ShareModal = ({ isOpen, projectId, projectTitle, onClose, showToast }) => 
               Kapat
             </button>
           </motion.div>
-        </>
+        </div>
       )}
     </AnimatePresence>
   );
