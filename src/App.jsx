@@ -2091,8 +2091,117 @@ const EventDetailPage = ({ eventId, onNavigate }) => {
   );
 };
 
-const ProjectDetailPage = ({ projectId, onNavigate }) => {
+const ShareModal = ({ isOpen, projectId, projectTitle, onClose, showToast }) => {
+  const shareUrl = `${window.location.origin}${window.location.pathname}#project-${projectId}`;
+
+  const copyToClipboard = async () => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        const textArea = document.createElement('textarea');
+        textArea.value = shareUrl;
+        textArea.style.position = 'fixed';
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      }
+      showToast('Link kopyalandi', 'success');
+    } catch (err) {
+      showToast('Link kopyalanamadi', 'error');
+    }
+  };
+
+  const shareLinks = {
+    whatsapp: `https://wa.me/?text=${encodeURIComponent(`${projectTitle} projesini incele: ${shareUrl}`)}`,
+    twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(`${projectTitle} projesini incele`)}`,
+    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-black/50 z-40"
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4"
+          >
+            <h2 className="text-2xl font-bold text-slate-900 mb-6">Projeyi Paylas</h2>
+            <div className="mb-6">
+              <label className="block text-sm font-bold text-slate-700 mb-3">
+                Paylasilabilir Link
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  readOnly
+                  value={shareUrl}
+                  className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-600 font-mono"
+                />
+                <button
+                  onClick={copyToClipboard}
+                  className="px-4 py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition-all flex items-center gap-2 whitespace-nowrap"
+                >
+                  Kopyala
+                </button>
+              </div>
+            </div>
+            <div className="mb-6">
+              <p className="text-sm font-bold text-slate-700 mb-3">Hizli Paylas</p>
+              <div className="flex gap-3">
+                <a
+                  href={shareLinks.whatsapp}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-50 text-green-700 border border-green-200 rounded-lg hover:bg-green-100 transition-all font-bold text-sm"
+                >
+                  <Send size={18} /> WhatsApp
+                </a>
+                <a
+                  href={shareLinks.twitter}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-all font-bold text-sm"
+                >
+                  <Twitter size={18} /> X
+                </a>
+                <a
+                  href={shareLinks.linkedin}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-all font-bold text-sm"
+                >
+                  <Linkedin size={18} /> LinkedIn
+                </a>
+              </div>
+            </div>
+            <button
+              onClick={onClose}
+              className="w-full px-4 py-3 bg-slate-100 text-slate-700 rounded-lg font-bold hover:bg-slate-200 transition-all"
+            >
+              Kapat
+            </button>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+};
+
+const ProjectDetailPage = ({ projectId, onNavigate, showToast }) => {
   const { getProjectById, loading } = useData();
+  const [isShareOpen, setIsShareOpen] = useState(false);
   const project = getProjectById(projectId);
 
   if (loading.projects) return <ProjectDetailSkeleton />;
@@ -2149,7 +2258,10 @@ const ProjectDetailPage = ({ projectId, onNavigate }) => {
                 >
                   <Github size={20} /> GitHub'da İncele
                 </a>
-                <button className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-all">
+                <button
+                  onClick={() => setIsShareOpen(true)}
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-all"
+                >
                   <Share2 size={20} /> Paylaş
                 </button>
               </div>
@@ -2187,6 +2299,14 @@ const ProjectDetailPage = ({ projectId, onNavigate }) => {
           </div>
         </div>
       </div>
+
+      <ShareModal
+        isOpen={isShareOpen}
+        projectId={projectId}
+        projectTitle={project.title}
+        onClose={() => setIsShareOpen(false)}
+        showToast={showToast}
+      />
     </motion.div>
   );
 };
@@ -2248,6 +2368,7 @@ export default function App() {
             key="project-detail"
             projectId={detailId}
             onNavigate={navigateTo}
+            showToast={showToast}
           />
         )}
         {currentPage === 'team-detail' && (
